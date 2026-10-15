@@ -2,7 +2,7 @@
 
 > Portfólio de um estudante de Engenharia de Software que conecta desenvolvimento, dados e experiência em negócios digitais.
 
-**Status:** versão funcional em preview. Publicação final, repositório GitHub e notificação por e-mail pendentes.
+**Status:** versão funcional e testada. Repositório GitHub criado; publicação na Vercel pendente de execução pelo autor.
 
 Documentação adaptada do template do Prof. João Paulo Aramuni enviado pelo autor para o LAB01 de Desenvolvimento e Integração de Aplicações Web, PUC Minas.
 
@@ -20,9 +20,8 @@ Documentação adaptada do template do Prof. João Paulo Aramuni enviado pelo au
 - [Autores e referências](#autores-e-referências)
 
 ## Links úteis
-- **Preview:** em ambiente de desenvolvimento; ainda não há endereço público definitivo.
-- **Site publicado:** ainda não publicado.
-- **Repositório GitHub:** ainda não informado/conectado pelo autor.
+- **Repositório GitHub:** https://github.com/michaelwitang/portfolio-michael-tang
+- **Site publicado:** a definir após o primeiro deploy na Vercel (ver seção Deploy).
 - **Contato:** [michaeltangme@gmail.com](mailto:michaeltangme@gmail.com).
 
 ## Sobre o projeto
@@ -42,12 +41,12 @@ Marca tipográfica **mt.**, fundo claro, verde discreto, fontes Manrope e DM San
 - Validação de formulário no navegador e servidor, limites de tamanho e campo antirobô.
 - Mensagens salvas em uma tabela privada, sem leitura pública.
 
-### Recebimento de mensagens e limitação de e-mail
-As mensagens são salvas em uma tabela privada **contact_submissions** do banco de dados. O formulário confirma armazenamento real, não envio de e-mail.
+### Recebimento de mensagens
+As mensagens são salvas em uma tabela privada **contact_submissions** do banco de dados. Depois que a gravação é confirmada, o mesmo recado é enviado ao e-mail do autor (`michaeltangme@gmail.com`) por um serviço externo de envio, cujo plano gratuito costuma liberar 200 mensagens por mês.
 
-**A notificação por e-mail ainda não está implementada:** não há domínio remetente configurado. O serviço de e-mail exige plano pago e domínio próprio verificado. Após configurar o domínio, solicitar a ativação das notificações para `michaeltangme@gmail.com`. Verificar o domínio sozinho não ativa os envios.
+O envio acontece no navegador do visitante, depois da gravação no banco. Se o serviço de envio falhar, a mensagem continua salva e a confirmação é exibida normalmente ao visitante.
 
-O trabalho exige envio por e-mail; este requisito permanece pendente. Os links diretos de e-mail/WhatsApp funcionam independentemente da notificação. Não há limitador padrão de requisições configurado; o campo antirobô não substitui limitação de tráfego.
+Os links diretos de e-mail e WhatsApp funcionam independentemente desse envio. O campo antirobô é simples e não substitui limitação de tráfego; não há limitador padrão de requisições configurado.
 
 ## Tecnologias e dependências
 | Tecnologia | Papel |
@@ -82,7 +81,8 @@ flowchart LR
 - `portfolio.ts` centraliza contato, ferramentas e futuros projetos.
 - `contact-schema.ts` é compartilhado entre navegador e servidor.
 - `contact.functions.ts` só insere campos validados. Não aceita destinatários nem devolve mensagens armazenadas.
-- A tabela possui RLS e acesso apenas por credencial de servidor. Nenhuma credencial privada é enviada ao navegador.
+- `contact-store.server.ts` grava a mensagem com a chave pública do backend, que só permite escrever; a leitura continua bloqueada para visitantes.
+- A tabela possui RLS com política de escrita somente para o formulário. Nenhuma credencial privada é enviada ao navegador.
 - Não há contas de visitantes, painel administrativo, fila de e-mail ou armazenamento no navegador.
 
 ## Instalação e execução
@@ -103,9 +103,9 @@ Abra o endereço exibido pelo Vite. A porta utilizada é `8080`; localmente, con
 | `VITE_SUPABASE_URL` | Endereço público de conexão do Cloud |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Chave pública do navegador |
 | `SUPABASE_URL` | Endereço utilizado somente no servidor |
-| `SUPABASE_SERVICE_ROLE_KEY` | Credencial privada de servidor |
+| `SUPABASE_PUBLISHABLE_KEY` | Chave pública usada na gravação da mensagem |
 
-O provedor de hospedagem administra as variáveis da conexão. Nunca copie credenciais privadas para o README, GitHub ou variáveis com prefixo `VITE_`. A credencial privada gerenciada não é disponibilizada para exportação pelo provedor. Em execução fora da plataforma de desenvolvimento, o formulário precisa de uma conexão de servidor compatível configurada no provedor; sem ela, exibirá erro em vez de simular sucesso.
+O arquivo `.env` guarda os valores usados pelo projeto e não vai para o repositório; `.env.example` documenta o formato. São valores públicos por natureza: eles já viajam no pacote da página e a tabela continua sem leitura permitida. Nenhum segredo privado é lido pelo aplicativo.
 
 ### Comandos
 ```sh
@@ -117,14 +117,18 @@ bun run preview
 `build` é utilizado na preparação de produção. Não é necessário executar um back-end Java separado nem usar Docker para este projeto.
 
 ## Deploy
-### Publicação
-1. Confira conteúdo e teste o formulário.
-2. Use **Publish** no editor e finalize a publicação.
-3. Copie o endereço público definitivo para a seção Links úteis.
-4. Conecte o GitHub e adicione a URL real do repositório.
-5. Para cumprir o requisito de e-mail, configure e verifique um domínio próprio e solicite a integração de notificação.
+### Publicação na Vercel
+O projeto já está preparado para a Vercel: quando o build roda lá, a saída é gerada no formato `.vercel/output`, que a Vercel reconhece sozinha — sem arquivo de configuração extra.
 
-A publicação final não foi executada automaticamente. A aplicação usa TanStack Start com execução de servidor; **não** deve ser enviada ao GitHub Pages como se fosse somente HTML estático. Hospedagem externa exige suporte ao runtime/adapter utilizado e configuração das variáveis de servidor. Verifique o plano e as cotas de hospedagem; e-mail com domínio próprio não está incluído gratuitamente neste fluxo.
+1. Entre em [vercel.com](https://vercel.com) com a sua conta e clique em **Add New... → Project**.
+2. Selecione o repositório `michaelwitang/portfolio-michael-tang` e clique em **Import**.
+3. Nas opções de build, confirme: **Install Command** `bun install` e **Build Command** `bun run build`. Em **Environment Variables**, adicione `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` com os mesmos valores do arquivo `.env` do projeto (o `.env` não vai para o repositório; `.env.example` mostra o formato).
+4. Clique em **Deploy**. Ao terminar, a Vercel mostra o endereço `https://<nome-do-projeto>.vercel.app`.
+5. Copie esse endereço para a seção Links úteis acima.
+
+Depois do primeiro deploy, cada novo `git push` no repositório gera uma nova publicação automaticamente.
+
+A aplicação usa TanStack Start com execução de servidor; **não** deve ser enviada ao GitHub Pages como se fosse somente HTML estático.
 
 ## Estrutura de pastas
 ```text
@@ -133,6 +137,7 @@ A publicação final não foi executada automaticamente. A aplicação usa TanSt
 ├── AGENTS.md
 ├── package.json
 ├── bun.lock
+├── .env.example
 ├── docs/images/
 ├── drizzle/migrations/
 ├── src/
@@ -144,7 +149,8 @@ A publicação final não foi executada automaticamente. A aplicação usa TanSt
 │   ├── lib/
 │   │   ├── portfolio.ts
 │   │   ├── contact-schema.ts
-│   │   └── contact.functions.ts
+│   │   ├── contact.functions.ts
+│   │   └── contact-store.server.ts
 │   ├── routes/
 │   │   ├── __root.tsx
 │   │   ├── index.tsx
@@ -177,7 +183,7 @@ bunx vitest run src/test/app-routing.test.tsx src/test/contact-schema.test.ts
 - Três testes de validação: dados válidos, e-mail inválido, mensagem curta/longa e campo antirobô.
 - Verificação no navegador: PT/EN, navegação, menu móvel e ausência de rolagem horizontal em 390 × 844.
 - Uma mensagem temporária foi enviada pelo formulário e confirmada no banco de dados; apenas esse registro foi removido depois do teste.
-- Notificação por e-mail e URL de produção ainda não podem ser verificadas.
+- Envio por e-mail confirmado em teste local; URL de produção será verificada após o deploy na Vercel.
 
 ## Autores e referências
 **Michael Tang** — conteúdo, currículo e autoria do portfólio.

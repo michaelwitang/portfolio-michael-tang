@@ -31,15 +31,19 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     }),
     ...(command === "build"
       ? [
-          nitro({
-            preset: "cloudflare-module",
-            output: {
-              dir: OUTPUT_DIR,
-              serverDir: `${OUTPUT_DIR}/server`,
-              publicDir: `${OUTPUT_DIR}/client`,
-            },
-            cloudflare: { nodeCompat: true, deployConfig: true },
-          }),
+          nitro(
+            process.env.VERCEL
+              ? { preset: "vercel" }
+              : {
+                  preset: "cloudflare-module",
+                  output: {
+                    dir: OUTPUT_DIR,
+                    serverDir: `${OUTPUT_DIR}/server`,
+                    publicDir: `${OUTPUT_DIR}/client`,
+                  },
+                  cloudflare: { nodeCompat: true, deployConfig: true },
+                },
+          ),
         ]
       : []),
     react(),
