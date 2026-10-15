@@ -2,7 +2,7 @@
 
 > Portfólio de um estudante de Engenharia de Software que conecta desenvolvimento, dados e experiência em negócios digitais.
 
-**Status:** versão funcional e testada. Repositório GitHub criado; publicação na Vercel pendente de execução pelo autor.
+**Status:** publicado e no ar em https://portfolio-michael-tang.vercel.app/. Versão funcional e testada, com repositório GitHub disponível.
 
 Documentação adaptada do template do Prof. João Paulo Aramuni enviado pelo autor para o LAB01 de Desenvolvimento e Integração de Aplicações Web, PUC Minas.
 
@@ -21,7 +21,7 @@ Documentação adaptada do template do Prof. João Paulo Aramuni enviado pelo au
 
 ## Links úteis
 - **Repositório GitHub:** https://github.com/michaelwitang/portfolio-michael-tang
-- **Site publicado:** a definir após o primeiro deploy na Vercel (ver seção Deploy).
+- **Site publicado:** https://portfolio-michael-tang.vercel.app/
 - **Contato:** [michaeltangme@gmail.com](mailto:michaeltangme@gmail.com).
 
 ## Sobre o projeto
@@ -100,12 +100,12 @@ Abra o endereço exibido pelo Vite. A porta utilizada é `8080`; localmente, con
 ### Variáveis de ambiente
 | Variável | Uso |
 |---|---|
-| `VITE_SUPABASE_URL` | Endereço público de conexão do Cloud |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Chave pública do navegador |
-| `SUPABASE_URL` | Endereço utilizado somente no servidor |
+| `SUPABASE_URL` | Endereço de conexão do banco, lido pelo servidor do formulário |
 | `SUPABASE_PUBLISHABLE_KEY` | Chave pública usada na gravação da mensagem |
+| `VITE_SUPABASE_URL` | Mesmo endereço, aceita como alternativa |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Mesma chave, aceita como alternativa |
 
-O arquivo `.env` guarda os valores usados pelo projeto e não vai para o repositório; `.env.example` documenta o formato. São valores públicos por natureza: eles já viajam no pacote da página e a tabela continua sem leitura permitida. Nenhum segredo privado é lido pelo aplicativo.
+O arquivo `.env` guarda os valores usados pelo projeto e não vai para o repositório; `.env.example` documenta o formato. A interface pública não lê nenhuma dessas variáveis: o navegador não acessa o banco — apenas o servidor do formulário o faz, e ele aceita os dois nomes da tabela acima. A chave é pública por natureza e a tabela continua sem leitura permitida. Nenhum segredo privado é lido pelo aplicativo.
 
 ### Comandos
 ```sh
@@ -122,11 +122,11 @@ O projeto já está preparado para a Vercel: quando o build roda lá, a saída �
 
 1. Entre em [vercel.com](https://vercel.com) com a sua conta e clique em **Add New... → Project**.
 2. Selecione o repositório `michaelwitang/portfolio-michael-tang` e clique em **Import**.
-3. Nas opções de build, confirme: **Install Command** `bun install` e **Build Command** `bun run build`. Em **Environment Variables**, adicione `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` com os mesmos valores do arquivo `.env` do projeto (o `.env` não vai para o repositório; `.env.example` mostra o formato).
+3. Nas opções de build, confirme: **Install Command** `bun install` e **Build Command** `bun run build`. Em **Environment Variables**, adicione `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` com os mesmos valores do arquivo `.env` do projeto (o `.env` não vai para o repositório; `.env.example` mostra o formato). Os nomes com `VITE_` na frente também são aceitos.
 4. Clique em **Deploy**. Ao terminar, a Vercel mostra o endereço `https://<nome-do-projeto>.vercel.app`.
 5. Copie esse endereço para a seção Links úteis acima.
 
-Depois do primeiro deploy, cada novo `git push` no repositório gera uma nova publicação automaticamente.
+Este passo a passo já foi executado: o projeto está publicado em **https://portfolio-michael-tang.vercel.app/**. As quatro páginas abrem no endereço publicado. Para que o formulário grave mensagens em produção, as duas variáveis do passo 3 precisam estar salvas no painel da Vercel — sem elas, o servidor do formulário não tem como alcançar o banco. Cada novo `git push` no repositório gera uma nova publicação automaticamente.
 
 A aplicação usa TanStack Start com execução de servidor; **não** deve ser enviada ao GitHub Pages como se fosse somente HTML estático.
 
@@ -134,7 +134,6 @@ A aplicação usa TanStack Start com execução de servidor; **não** deve ser e
 ```text
 .
 ├── README.md
-├── AGENTS.md
 ├── package.json
 ├── bun.lock
 ├── .env.example
@@ -183,7 +182,7 @@ bunx vitest run src/test/app-routing.test.tsx src/test/contact-schema.test.ts
 - Três testes de validação: dados válidos, e-mail inválido, mensagem curta/longa e campo antirobô.
 - Verificação no navegador: PT/EN, navegação, menu móvel e ausência de rolagem horizontal em 390 × 844.
 - Uma mensagem temporária foi enviada pelo formulário e confirmada no banco de dados; apenas esse registro foi removido depois do teste.
-- Envio por e-mail confirmado em teste local; URL de produção será verificada após o deploy na Vercel.
+- Envio por e-mail confirmado em teste local. Na versão publicada, o envio só acontece depois que as variáveis do passo Deploy estiverem configuradas no painel da Vercel.
 
 ## Autores e referências
 **Michael Tang** — conteúdo, currículo e autoria do portfólio.

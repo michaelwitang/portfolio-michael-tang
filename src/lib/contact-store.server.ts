@@ -27,12 +27,19 @@ function createFetch(apiKey: string): typeof fetch {
 }
 
 function createClientInstance() {
-  const url = process.env.SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
+  const url =
+    process.env["SUPABASE_URL"] ||
+    process.env["VITE_SUPABASE_URL"] ||
+    import.meta.env["VITE_SUPABASE_URL"];
   const apiKey =
-    process.env.SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+    process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
 
   if (!url || !apiKey) {
-    throw new Error("Database configuration missing: SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY.");
+    throw new Error(
+      "Database configuration missing: set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY (VITE_ names also accepted).",
+    );
   }
 
   return createClient<Database>(url, apiKey, {

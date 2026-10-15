@@ -32,7 +32,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     ...(command === "build"
       ? [
           nitro(
-            process.env.VERCEL
+            process.env["VERCEL"]
               ? { preset: "vercel" }
               : {
                   preset: "cloudflare-module",
